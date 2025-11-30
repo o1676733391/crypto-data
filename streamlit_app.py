@@ -1,91 +1,69 @@
-"""
-Crypto Data Warehouse Dashboard
-Real-time market monitoring, historical analysis, and price alerts
-"""
 import streamlit as st
+import importlib
+import os
 
+# Page configuration
 st.set_page_config(
-    page_title="Crypto Data Warehouse",
-    page_icon="📈",
+    page_title="Crypto & DeFi Data Warehouse Dashboard",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
+# Custom CSS for better aesthetics
+st.markdown("""
+    <style>
+    .main {
+        padding-top: 2rem;
+    }
+    .stMetric {
+        background-color: #f0f2f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+    h1 {
+        color: #1f77b4;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# List available pages
+PAGES = {
+    "🏦 DeFi Protocol TVL Explorer": "protocol_tvl",
+    "⛓️ Blockchain Chain Dominance": "chain_tvl",
+    "💹 Crypto Market Overview": "market_overview",
+    "💰 Stablecoin Analytics": "stablecoins",
+    "📊 Technical Analysis Dashboard": "technical_indicators",
+    "📈 OHLCV Candle Charts": "candles"
+}
+
 # Sidebar navigation
-st.sidebar.title("📈 Crypto Dashboard")
+st.sidebar.title("🚀 Navigation")
 st.sidebar.markdown("---")
+st.sidebar.markdown("""
+### Welcome to the Dashboard
+Explore comprehensive crypto and DeFi analytics with interactive visualizations.
 
-# Main section selector
-section = st.sidebar.radio(
-    "Section",
-    ["💰 Crypto (CEX)", "🏦 DeFi Analytics"]
-)
+**Features:**
+- Real-time market data
+- DeFi protocol analytics
+- Technical indicators
+- Candlestick charts
+""")
 
 st.sidebar.markdown("---")
+selection = st.sidebar.radio("Select Dashboard", list(PAGES.keys()))
 
-# Page navigation based on section
-if section == "💰 Crypto (CEX)":
-    page = st.sidebar.radio(
-        "Navigation",
-        ["🔴 Live Prices", "⚡ Tick Stream", "📊 Historical Charts", "🔔 Price Alerts", "📈 Market Overview"]
-    )
-    
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("""
-    ### Crypto Data
-    Real-time CEX market data
-    - **Source**: Binance API
-    - **Real-time DB**: Supabase
-    - **Analytics DB**: Snowflake
-    - **Update**: 5 seconds
-    """)
-else:
-    page = st.sidebar.radio(
-        "Navigation",
-        ["🏦 Protocol Rankings", "⛓️ Chain Analysis", "🌐 Market Overview"]
-    )
-    
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("""
-    ### DeFi Data
-    Protocol & chain TVL tracking
-    - **Source**: DefiLlama API
-    - **Protocols**: 6,703
-    - **Chains**: 416
-    - **Update**: 60 minutes
-    """)
+# Footer in sidebar
+st.sidebar.markdown("---")
+st.sidebar.markdown("**Crypto & DeFi Data Warehouse**")
+st.sidebar.markdown("*Powered by Snowflake & Supabase*")
 
-# Main content routing
-if section == "💰 Crypto (CEX)":
-    if page == "🔴 Live Prices":
-        from pages import live_prices
-        live_prices.render()
-
-    elif page == "⚡ Tick Stream":
-        from pages import tick_stream
-        tick_stream.render()
-        
-    elif page == "📊 Historical Charts":
-        from pages import historical_charts
-        historical_charts.render()
-        
-    elif page == "🔔 Price Alerts":
-        from pages import price_alerts
-        price_alerts.render()
-        
-    elif page == "📈 Market Overview":
-        from pages import market_overview
-        market_overview.render()
-
-else:  # DeFi Analytics section
-    if page == "🏦 Protocol Rankings":
-        from pages import defi_protocols
-        defi_protocols.render()
-    
-    elif page == "⛓️ Chain Analysis":
-        from pages import defi_chains
-        defi_chains.render()
-    
-    elif page == "🌐 Market Overview":
-        from pages import defi_overview
-        defi_overview.render()
+# Main content
+try:
+    # Dynamically import and run the selected page
+    page_module = importlib.import_module(f"pages.{PAGES[selection]}")
+    page_module.main()
+except Exception as e:
+    st.error(f"❌ Error loading page: {str(e)}")
+    st.info("Please ensure all data files are present in the snowflake_export directory.")

@@ -1,34 +1,43 @@
-# Environment variables
+# Ignore all files in root by default
+/*
+
+# Keep specific root files
+!streamlit_app.py
+!requirements.txt
+!.env.example
+!README.md
+!DATA_WAREHOUSE_REPORT.md
+!.gitignore
+
+# Ignore environment file
 .env
 
-# Virtual environment
-.venv/
-venv/
-ENV/
+# Ignore all folders by default
+/*/
 
-# Python cache
+# Keep specific folders
+!snowflake_export/
+!supabase_export/
+!pages/
+!scripts/
+!src/
+!figure/
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
-# Distribution / packaging
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
 
 # IDE
 .vscode/
@@ -43,8 +52,3 @@ Thumbs.db
 
 # Logs
 *.log
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
